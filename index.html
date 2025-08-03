@@ -1,14 +1,564 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Real-time - Keuangan HUT RI ke-80</title>
+    <!-- Menggunakan Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .pending-deletion { background-color: #fef9c3 !important; text-decoration: line-through; color: #9ca3af; }
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid #b91c1c;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+<body class="bg-gray-100">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ===== HALAMAN LOGIN ===== -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center bg-red-700 p-4 hidden">
+        <div class="bg-white w-full max-w-md p-8 rounded-xl shadow-2xl">
+            <div class="text-center mb-8">
+                <img src="https://placehold.co/100x100/FFFFFF/B22222?text=RI-80" alt="Logo HUT RI 80" class="mx-auto mb-4 rounded-full border-4 border-red-700">
+                <h1 class="text-2xl font-bold text-gray-800">Panel Keuangan</h1>
+                <p class="text-gray-500">HUT Republik Indonesia ke-80</p>
+            </div>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Masukkan email" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="text" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Masukkan password" required>
+                </div>
+                <p id="error-message" class="text-red-500 text-sm text-center mb-4"></p>
+                <button type="submit" class="w-full bg-red-700 text-white font-bold py-2 px-4 rounded-md hover:bg-red-800 transition duration-300">Login</button>
+            </form>
+            <div class="mt-4 text-center">
+                 <button id="visitor-login-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300">Masuk sebagai Visitor</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== HALAMAN DASHBOARD MANAJEMEN ===== -->
+    <div id="dashboard-page" class="hidden flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-red-800 text-white flex flex-col fixed inset-y-0 left-0 z-30 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-shrink-0">
+            <div class="h-16 flex items-center justify-center border-b border-red-900">
+                <h1 class="text-xl font-bold">PANEL KEUANGAN</h1>
+            </div>
+            <nav class="flex-1 px-2 py-4 space-y-2">
+                <a href="#" id="menu-dashboard" class="flex items-center px-4 py-2.5 rounded-md text-sm font-medium"><svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>Dashboard</a>
+                <a href="#" id="menu-uang-masuk" class="flex items-center px-4 py-2.5 rounded-md text-sm font-medium"><svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1m0-1H9.5a2.5 2.5 0 00-2.5 2.5V17.5a2.5 2.5 0 002.5 2.5h5A2.5 2.5 0 0017 17.5v-2.5a2.5 2.5 0 00-2.5-2.5H12"></path></svg>Uang Masuk</a>
+                <a href="#" id="menu-uang-keluar" class="flex items-center px-4 py-2.5 rounded-md text-sm font-medium"><svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1m0-1H9.5a2.5 2.5 0 00-2.5 2.5V17.5a2.5 2.5 0 002.5 2.5h5A2.5 2.5 0 0017 17.5v-2.5a2.5 2.5 0 00-2.5-2.5H12M17 11l-4-4-4 4m4 8v-8"></path></svg>Uang Keluar</a>
+                <a href="#" id="menu-profile" class="flex items-center px-4 py-2.5 rounded-md text-sm font-medium"><svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>Profil Pengguna</a>
+            </nav>
+            <div class="px-2 py-4 mt-auto border-t border-red-900">
+                <button id="logout-button" class="w-full flex items-center px-4 py-2.5 rounded-md text-sm font-medium hover:bg-red-700"><svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>Logout</button>
+            </div>
+        </aside>
+        
+        <!-- Overlay untuk sidebar mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-md">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <div class="flex items-center">
+                        <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        </button>
+                        <h1 id="page-title" class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                    </div>
+                    <div id="role-indicator" class="text-sm font-bold px-3 py-1 rounded-full"></div>
+                </div>
+            </header>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <div id="content-dashboard"><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-2">Total Uang Masuk</h3><p id="summary-masuk" class="text-3xl font-bold"></p></div><div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-2">Total Uang Keluar</h3><p id="summary-keluar" class="text-3xl font-bold"></p></div><div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-6 rounded-lg shadow-md"><h3 class="text-lg font-semibold mb-2">Saldo Akhir</h3><p id="summary-saldo" class="text-3xl font-bold"></p></div></div></div>
+                <div id="content-uang-masuk" class="hidden">
+                    <div id="form-container-masuk" class="bg-white p-6 rounded-lg shadow-md mb-6"><h2 id="form-title-masuk" class="text-xl font-bold mb-4 text-gray-800">Tambah Data Uang Masuk</h2><form id="form-masuk" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="md:col-span-2"><label for="desc-masuk" class="block text-sm font-medium text-gray-700">Keterangan</label><input type="text" id="desc-masuk" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></div><div><label for="total-masuk" class="block text-sm font-medium text-gray-700">Total Uang Masuk (Rp)</label><input type="number" id="total-masuk" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></div><div><label for="dp-masuk" class="block text-sm font-medium text-gray-700">Uang Muka (Rp)</label><input type="number" id="dp-masuk" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></div><div class="md:col-span-2 flex justify-end space-x-3"><button type="button" id="cancel-edit-masuk" class="hidden bg-gray-500 text-white font-bold py-2 px-4 rounded-md">Batal</button><button type="submit" id="submit-masuk" class="bg-red-700 text-white font-bold py-2 px-4 rounded-md">Tambah</button></div></form></div>
+                    <div class="mb-4"><input type="text" id="search-masuk" placeholder="Cari berdasarkan keterangan..." class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-x-auto"><table class="w-full"><thead><tr class="bg-gray-100"><th class="p-3 text-left">No</th><th class="p-3 text-left">Keterangan</th><th class="p-3 text-right">Uang Masuk</th><th class="p-3 text-right">Uang Muka</th><th class="p-3 text-right">Sisa</th><th id="aksi-header-masuk" class="p-3 text-center">Aksi</th></tr></thead><tbody id="table-body-masuk"></tbody></table></div>
+                </div>
+                <div id="content-uang-keluar" class="hidden">
+                    <div id="form-container-keluar" class="bg-white p-6 rounded-lg shadow-md mb-6"><h2 id="form-title-keluar" class="text-xl font-bold mb-4 text-gray-800">Tambah Data Uang Keluar</h2><form id="form-keluar" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="md:col-span-2"><label for="desc-keluar" class="block text-sm font-medium text-gray-700">Keterangan Pengeluaran</label><input type="text" id="desc-keluar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></div><div class="md:col-span-2"><label for="total-keluar" class="block text-sm font-medium text-gray-700">Jumlah Pengeluaran (Rp)</label><input type="number" id="total-keluar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></div><div class="md:col-span-2 flex justify-end space-x-3"><button type="button" id="cancel-edit-keluar" class="hidden bg-gray-500 text-white font-bold py-2 px-4 rounded-md">Batal</button><button type="submit" id="submit-keluar" class="bg-red-700 text-white font-bold py-2 px-4 rounded-md">Tambah</button></div></form></div>
+                    <div class="mb-4"><input type="text" id="search-keluar" placeholder="Cari berdasarkan keterangan..." class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-x-auto"><table class="w-full"><thead><tr class="bg-gray-100"><th class="p-3 text-left">No</th><th class="p-3 text-left">Keterangan</th><th class="p-3 text-right">Jumlah</th><th id="aksi-header-keluar" class="p-3 text-center">Aksi</th></tr></thead><tbody id="table-body-keluar"></tbody></table></div>
+                </div>
+                <div id="content-profile" class="hidden">
+                    <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800">Profil Pengguna</h2>
+                        <div class="mb-6">
+                            <p class="text-sm text-gray-500">Email</p>
+                            <p id="profile-email" class="text-lg font-medium text-gray-900"></p>
+                        </div>
+                        <hr class="my-6">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Ganti Password</h3>
+                        <form id="change-password-form"><div class="mb-4"><label for="new-password" class="block text-sm font-medium text-gray-700">Password Baru</label><input type="password" id="new-password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required minlength="6"></div><div class="mb-6"><label for="confirm-password" class="block text-sm font-medium text-gray-700">Konfirmasi Password Baru</label><input type="password" id="confirm-password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></div><p id="password-message" class="text-sm text-center mb-4"></p><div class="flex justify-end"><button type="submit" class="bg-red-700 text-white font-bold py-2 px-4 rounded-md hover:bg-red-800">Simpan Password</button></div></form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import fungsi-fungsi Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signOut, 
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            onSnapshot, 
+            addDoc, 
+            updateDoc, 
+            deleteDoc, 
+            doc,
+            serverTimestamp,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Konfigurasi Firebase ---
+        const firebaseConfig = {
+            // TODO: Ganti dengan API Key Anda yang valid dari Firebase Console.
+            // Kunci API saat ini tampaknya tidak valid dan menyebabkan kegagalan koneksi.
+            apiKey: "AIzaSyBcClx0H_0RKig3fnA8GxQ4hIdiChTArzg",
+            authDomain: "reportvoucherreseller.firebaseapp.com",
+            databaseURL: "https://reportvoucherreseller-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "reportvoucherreseller",
+            storageBucket: "reportvoucherreseller.appspot.com",
+            messagingSenderId: "868058615913",
+            appId: "1:868058615913:web:6f9083e03524d9299d52f8"
+        };
+
+        // Inisialisasi Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Referensi Koleksi Firestore ---
+        // PENTING: Anda harus membuat koleksi 'users' di Firestore.
+        // Setiap dokumen dalam koleksi ini harus memiliki ID yang sama dengan UID pengguna dari Firebase Authentication.
+        // Dokumen tersebut harus berisi field 'role', contoh: { role: 'admin' } atau { role: 'editor' }.
+        const usersCol = collection(db, 'users');
+        const uangMasukCol = collection(db, `events/${firebaseConfig.projectId}/uangMasuk`);
+        const uangKeluarCol = collection(db, `events/${firebaseConfig.projectId}/uangKeluar`);
+
+        // --- State Aplikasi ---
+        let currentUser = null; // Menyimpan objek user dari Firebase Auth
+        let userRole = null; // Menyimpan role (admin, editor, visitor)
+        let editingMasukId = null;
+        let editingKeluarId = null;
+        let unsubscribeMasuk = null;
+        let unsubscribeKeluar = null;
+        let allDataMasuk = [];
+        let allDataKeluar = [];
+        let searchTermMasuk = '';
+        let searchTermKeluar = '';
+
+        // --- Selektor DOM ---
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loginPage = document.getElementById('login-page');
+        const dashboardPage = document.getElementById('dashboard-page');
+        const loginForm = document.getElementById('login-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('error-message');
+        const visitorLoginBtn = document.getElementById('visitor-login-btn');
+        const logoutButton = document.getElementById('logout-button');
+        const pageTitle = document.getElementById('page-title');
+        const roleIndicator = document.getElementById('role-indicator');
+
+        const menus = { dashboard: document.getElementById('menu-dashboard'), masuk: document.getElementById('menu-uang-masuk'), keluar: document.getElementById('menu-uang-keluar') };
+        const contents = { dashboard: document.getElementById('content-dashboard'), masuk: document.getElementById('content-uang-masuk'), keluar: document.getElementById('content-uang-keluar') };
+        
+        const formContainerMasuk = document.getElementById('form-container-masuk');
+        const formMasuk = document.getElementById('form-masuk');
+        const descMasukInput = document.getElementById('desc-masuk');
+        const totalMasukInput = document.getElementById('total-masuk');
+        const dpMasukInput = document.getElementById('dp-masuk');
+        const tableBodyMasuk = document.getElementById('table-body-masuk');
+        const formTitleMasuk = document.getElementById('form-title-masuk');
+        const submitMasukBtn = document.getElementById('submit-masuk');
+        const cancelEditMasukBtn = document.getElementById('cancel-edit-masuk');
+        const aksiHeaderMasuk = document.getElementById('aksi-header-masuk');
+
+        const formContainerKeluar = document.getElementById('form-container-keluar');
+        const formKeluar = document.getElementById('form-keluar');
+        const descKeluarInput = document.getElementById('desc-keluar');
+        const totalKeluarInput = document.getElementById('total-keluar');
+        const tableBodyKeluar = document.getElementById('table-body-keluar');
+        const formTitleKeluar = document.getElementById('form-title-keluar');
+        const submitKeluarBtn = document.getElementById('submit-keluar');
+        const cancelEditKeluarBtn = document.getElementById('cancel-edit-keluar');
+        const aksiHeaderKeluar = document.getElementById('aksi-header-keluar');
+
+        const searchMasukInput = document.getElementById('search-masuk');
+        const searchKeluarInput = document.getElementById('search-keluar');
+        
+        // --- Fungsi Bantuan ---
+        const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        const showLoading = (show) => { loadingOverlay.classList.toggle('hidden', !show); };
+
+        // --- Fungsi Render ---
+        const renderUI = () => {
+            if (!userRole) return; // Jangan render jika belum ada role
+            renderDashboard();
+            renderTableMasuk();
+            renderTableKeluar();
+        };
+
+        const renderDashboard = () => {
+            const totalMasuk = allDataMasuk.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.totalAmount, 0);
+            const totalKeluar = allDataKeluar.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
+            const saldoAkhir = totalMasuk - totalKeluar;
+            document.getElementById('summary-masuk').textContent = formatCurrency(totalMasuk);
+            document.getElementById('summary-keluar').textContent = formatCurrency(totalKeluar);
+            document.getElementById('summary-saldo').textContent = formatCurrency(saldoAkhir);
+        };
+
+        const renderTableMasuk = () => {
+            tableBodyMasuk.innerHTML = '';
+            const filteredData = allDataMasuk.filter(trx => 
+                trx.description.toLowerCase().includes(searchTermMasuk.toLowerCase())
+            );
+
+            filteredData.sort((a,b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0)).forEach((trx, index) => {
+                const sisa = trx.totalAmount - trx.downPayment;
+                let aksiButtons = '';
+                const rowClass = trx.status === 'pending_deletion' ? 'pending-deletion' : '';
+
+                if (userRole === 'admin') {
+                    if (trx.status === 'pending_deletion') {
+                        aksiButtons = `<td class="p-3 text-center"><button onclick="window.handleApproveDelete('masuk', '${trx.id}')" class="text-green-600 hover:underline mr-3">Setujui</button><button onclick="window.handleRejectDelete('masuk', '${trx.id}')" class="text-red-600 hover:underline">Tolak</button></td>`;
+                    } else {
+                        aksiButtons = `<td class="p-3 text-center"><button onclick="window.handleEdit('masuk', '${trx.id}')" class="text-blue-600 hover:underline mr-3">Edit</button><button onclick="window.handleDelete('masuk', '${trx.id}')" class="text-red-600 hover:underline">Hapus</button></td>`;
+                    }
+                } else if (userRole === 'editor') {
+                    if (trx.status !== 'pending_deletion') {
+                       aksiButtons = `<td class="p-3 text-center"><button onclick="window.handleEdit('masuk', '${trx.id}')" class="text-blue-600 hover:underline mr-3">Edit</button><button onclick="window.handleDelete('masuk', '${trx.id}')" class="text-red-600 hover:underline">Hapus</button></td>`;
+                    } else {
+                       aksiButtons = `<td class="p-3 text-center text-gray-500">Menunggu Persetujuan</td>`;
+                    }
+                }
+
+                const row = `<tr class="border-b ${rowClass}"><td class="p-3">${index + 1}</td><td class="p-3">${trx.description}</td><td class="p-3 text-right">${formatCurrency(trx.totalAmount)}</td><td class="p-3 text-right">${formatCurrency(trx.downPayment)}</td><td class="p-3 text-right font-medium ${sisa > 0 ? 'text-orange-600' : 'text-green-600'}">${formatCurrency(sisa)}</td>${aksiButtons}</tr>`;
+                tableBodyMasuk.innerHTML += row;
+            });
+        };
+
+        const renderTableKeluar = () => {
+            tableBodyKeluar.innerHTML = '';
+            const filteredData = allDataKeluar.filter(trx => 
+                trx.description.toLowerCase().includes(searchTermKeluar.toLowerCase())
+            );
+
+            filteredData.sort((a,b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0)).forEach((trx, index) => {
+                let aksiButtons = '';
+                const rowClass = trx.status === 'pending_deletion' ? 'pending-deletion' : '';
+
+                if (userRole === 'admin') {
+                    if (trx.status === 'pending_deletion') {
+                        aksiButtons = `<td class="p-3 text-center"><button onclick="window.handleApproveDelete('keluar', '${trx.id}')" class="text-green-600 hover:underline mr-3">Setujui</button><button onclick="window.handleRejectDelete('keluar', '${trx.id}')" class="text-red-600 hover:underline">Tolak</button></td>`;
+                    } else {
+                        aksiButtons = `<td class="p-3 text-center"><button onclick="window.handleEdit('keluar', '${trx.id}')" class="text-blue-600 hover:underline mr-3">Edit</button><button onclick="window.handleDelete('keluar', '${trx.id}')" class="text-red-600 hover:underline">Hapus</button></td>`;
+                    }
+                } else if (userRole === 'editor') {
+                     if (trx.status !== 'pending_deletion') {
+                        aksiButtons = `<td class="p-3 text-center"><button onclick="window.handleEdit('keluar', '${trx.id}')" class="text-blue-600 hover:underline mr-3">Edit</button><button onclick="window.handleDelete('keluar', '${trx.id}')" class="text-red-600 hover:underline">Hapus</button></td>`;
+                    } else {
+                        aksiButtons = `<td class="p-3 text-center text-gray-500">Menunggu Persetujuan</td>`;
+                    }
+                }
+                
+                const row = `<tr class="border-b ${rowClass}"><td class="p-3">${index + 1}</td><td class="p-3">${trx.description}</td><td class="p-3 text-right">${formatCurrency(trx.amount)}</td>${aksiButtons}</tr>`;
+                tableBodyKeluar.innerHTML += row;
+            });
+        };
+
+        // --- Fungsi Pengaturan UI berdasarkan Role ---
+        const setupUIForRole = () => {
+            const isEditorOrAdmin = userRole === 'admin' || userRole === 'editor';
+            formContainerMasuk.style.display = isEditorOrAdmin ? 'block' : 'none';
+            formContainerKeluar.style.display = isEditorOrAdmin ? 'block' : 'none';
+            aksiHeaderMasuk.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
+            aksiHeaderKeluar.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
+
+            const roles = { admin: 'ADMIN', editor: 'EDITOR', visitor: 'VISITOR' };
+            const colors = { admin: 'bg-red-100 text-red-700', editor: 'bg-blue-100 text-blue-700', visitor: 'bg-gray-200 text-gray-700' };
+            roleIndicator.textContent = roles[userRole] || 'TIDAK DIKENAL';
+            roleIndicator.className = `text-sm font-bold px-3 py-1 rounded-full ${colors[userRole]}`;
+        };
+
+        const setupAndShowDashboard = () => {
+            loginPage.classList.add('hidden');
+            dashboardPage.classList.remove('hidden');
+            setupUIForRole();
+            switchPage('dashboard');
+            renderUI();
+        };
+
+        // --- Fungsi Navigasi ---
+        const switchPage = (pageKey) => {
+            const pageTitles = { dashboard: 'Dashboard', masuk: 'Manajemen Uang Masuk', keluar: 'Manajemen Uang Keluar' };
+            pageTitle.textContent = pageTitles[pageKey];
+            Object.keys(contents).forEach(key => {
+                contents[key].classList.toggle('hidden', key !== pageKey);
+                menus[key].classList.remove('bg-red-900', 'hover:bg-red-700');
+                menus[key].classList.add(key === pageKey ? 'bg-red-900' : 'hover:bg-red-700');
+            });
+        };
+        
+        // --- Fungsi Inisialisasi Listener Data ---
+        const initializeDataListeners = () => {
+            if (unsubscribeMasuk) unsubscribeMasuk();
+            unsubscribeMasuk = onSnapshot(uangMasukCol, (snapshot) => {
+                allDataMasuk = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if(userRole) renderUI();
+            }, (error) => console.error("Error listening to uangMasuk:", error));
+
+            if (unsubscribeKeluar) unsubscribeKeluar();
+            unsubscribeKeluar = onSnapshot(uangKeluarCol, (snapshot) => {
+                allDataKeluar = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if(userRole) renderUI();
+            }, (error) => console.error("Error listening to uangKeluar:", error));
+        };
+
+        // --- Manajemen Status Autentikasi ---
+        onAuthStateChanged(auth, async (user) => {
+            showLoading(true);
+            currentUser = user; // Simpan status user saat ini
+
+            if (user) { // Pengguna berhasil login dengan email/password
+                try {
+                    const userDocRef = doc(usersCol, user.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+
+                    if (userDocSnap.exists() && userDocSnap.data().role) {
+                        userRole = userDocSnap.data().role;
+                        initializeDataListeners();
+                        setupAndShowDashboard();
+                    } else {
+                        console.error("Peran pengguna tidak ditemukan di Firestore untuk UID:", user.uid);
+                        errorMessage.textContent = 'Konfigurasi peran tidak ditemukan.';
+                        await signOut(auth); // Logout paksa jika role tidak ada
+                    }
+                } catch (error) {
+                    console.error("Gagal mengambil peran pengguna:", error);
+                    errorMessage.textContent = 'Gagal memuat data pengguna.';
+                    await signOut(auth);
+                }
+            } else { // Pengguna logout atau sesi tidak ada
+                userRole = null;
+                if (unsubscribeMasuk) unsubscribeMasuk();
+                if (unsubscribeKeluar) unsubscribeKeluar();
+                loginPage.classList.remove('hidden');
+                dashboardPage.classList.add('hidden');
+                loginForm.reset();
+            }
+            showLoading(false);
+        });
+
+        // --- Handler untuk Form Login ---
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            errorMessage.textContent = '';
+            showLoading(true);
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged akan menangani sisanya secara otomatis
+            } catch (error) {
+                console.error("Login gagal:", error.code);
+                errorMessage.textContent = 'Email atau password yang Anda masukkan salah.';
+                showLoading(false);
+            }
+        };
+
+        const handleVisitorLogin = () => {
+            userRole = 'visitor';
+            initializeDataListeners();
+            setupAndShowDashboard();
+        };
+
+        const handleLogout = async () => {
+            if (currentUser) {
+                await signOut(auth);
+            } else {
+                // Jika logout sebagai visitor, cukup reset UI
+                userRole = null;
+                loginPage.classList.remove('hidden');
+                dashboardPage.classList.add('hidden');
+                loginForm.reset();
+            }
+            // onAuthStateChanged akan menangani reset UI untuk pengguna yang terautentikasi
+        };
+
+        // --- Handler CRUD Universal ---
+        const handleFormSubmit = async (type, e) => {
+            e.preventDefault();
+            if (userRole !== 'admin' && userRole !== 'editor') return;
+            showLoading(true);
+
+            try {
+                if (type === 'masuk') {
+                    const totalAmount = parseFloat(totalMasukInput.value);
+                    const downPayment = parseFloat(dpMasukInput.value);
+                    if (downPayment > totalAmount) { alert('Uang muka tidak boleh lebih besar dari total uang masuk.'); showLoading(false); return; }
+                    
+                    const data = { description: descMasukInput.value, totalAmount, downPayment, status: 'active', createdAt: serverTimestamp() };
+                    if (editingMasukId) {
+                        await updateDoc(doc(uangMasukCol, editingMasukId), data);
+                    } else {
+                        await addDoc(uangMasukCol, data);
+                    }
+                    resetForm('masuk');
+                } else if (type === 'keluar') {
+                    const amount = parseFloat(totalKeluarInput.value);
+                    const data = { description: descKeluarInput.value, amount, status: 'active', createdAt: serverTimestamp() };
+                    if (editingKeluarId) {
+                        await updateDoc(doc(uangKeluarCol, editingKeluarId), data);
+                    } else {
+                        await addDoc(uangKeluarCol, data);
+                    }
+                    resetForm('keluar');
+                }
+            } catch (error) {
+                console.error("Error writing document: ", error);
+                alert("Gagal menyimpan data.");
+            }
+            showLoading(false);
+        };
+        
+        const resetForm = (type) => {
+            if (type === 'masuk') {
+                editingMasukId = null;
+                formMasuk.reset();
+                formTitleMasuk.textContent = 'Tambah Data Uang Masuk';
+                submitMasukBtn.textContent = 'Tambah';
+                cancelEditMasukBtn.classList.add('hidden');
+            } else if (type === 'keluar') {
+                editingKeluarId = null;
+                formKeluar.reset();
+                formTitleKeluar.textContent = 'Tambah Data Uang Keluar';
+                submitKeluarBtn.textContent = 'Tambah';
+                cancelEditKeluarBtn.classList.add('hidden');
+            }
+        };
+
+        window.handleEdit = async (type, id) => {
+            if (userRole !== 'admin' && userRole !== 'editor') return;
+            showLoading(true);
+            const collectionRef = type === 'masuk' ? uangMasukCol : uangKeluarCol;
+            const docRef = doc(collectionRef, id);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const trx = docSnap.data();
+                if (type === 'masuk') {
+                    editingMasukId = id;
+                    descMasukInput.value = trx.description;
+                    totalMasukInput.value = trx.totalAmount;
+                    dpMasukInput.value = trx.downPayment;
+                    formTitleMasuk.textContent = 'Edit Data Uang Masuk';
+                    submitMasukBtn.textContent = 'Update';
+                    cancelEditMasukBtn.classList.remove('hidden');
+                    descMasukInput.focus();
+                } else {
+                    editingKeluarId = id;
+                    descKeluarInput.value = trx.description;
+                    totalKeluarInput.value = trx.amount;
+                    formTitleKeluar.textContent = 'Edit Data Uang Keluar';
+                    submitKeluarBtn.textContent = 'Update';
+                    cancelEditKeluarBtn.classList.remove('hidden');
+                    descKeluarInput.focus();
+                }
+            }
+            showLoading(false);
+        };
+
+        window.handleDelete = async (type, id) => {
+            const collectionRef = type === 'masuk' ? uangMasukCol : uangKeluarCol;
+            if (userRole === 'admin') {
+                if (confirm('Admin: Yakin ingin menghapus data ini secara permanen?')) {
+                    await deleteDoc(doc(collectionRef, id));
+                }
+            } else if (userRole === 'editor') {
+                if (confirm('Editor: Ajukan permintaan hapus data ini kepada admin?')) {
+                    await updateDoc(doc(collectionRef, id), { status: 'pending_deletion' });
+                }
+            }
+        };
+        
+        window.handleApproveDelete = async (type, id) => {
+            if (userRole !== 'admin') return;
+            const collectionRef = type === 'masuk' ? uangMasukCol : uangKeluarCol;
+            await deleteDoc(doc(collectionRef, id));
+        };
+        
+        window.handleRejectDelete = async (type, id) => {
+            if (userRole !== 'admin') return;
+            const collectionRef = type === 'masuk' ? uangMasukCol : uangKeluarCol;
+            await updateDoc(doc(collectionRef, id), { status: 'active' });
+        };
+        
+        // --- Event Listeners & Inisialisasi ---
+        loginForm.addEventListener('submit', handleLogin);
+        visitorLoginBtn.addEventListener('click', handleVisitorLogin);
+        logoutButton.addEventListener('click', handleLogout);
+
+        menus.dashboard.addEventListener('click', (e) => { e.preventDefault(); switchPage('dashboard'); });
+        menus.masuk.addEventListener('click', (e) => { e.preventDefault(); switchPage('masuk'); });
+        menus.keluar.addEventListener('click', (e) => { e.preventDefault(); switchPage('keluar'); });
+
+        formMasuk.addEventListener('submit', (e) => handleFormSubmit('masuk', e));
+        cancelEditMasukBtn.addEventListener('click', () => resetForm('masuk'));
+        formKeluar.addEventListener('submit', (e) => handleFormSubmit('keluar', e));
+        cancelEditKeluarBtn.addEventListener('click', () => resetForm('keluar'));
+
+        searchMasukInput.addEventListener('input', (e) => {
+            searchTermMasuk = e.target.value;
+            renderTableMasuk();
+        });
+
+        searchKeluarInput.addEventListener('input', (e) => {
+            searchTermKeluar = e.target.value;
+            renderTableKeluar();
+        });
+
+        // Aplikasi dimulai. Tampilkan loading awal.
+        // onAuthStateChanged akan menentukan halaman mana yang ditampilkan (login atau dashboard).
+        showLoading(false); // Sembunyikan loading awal, onAuthStateChanged akan menampilkannya lagi jika perlu
+
+    </script>
 </body>
 </html>

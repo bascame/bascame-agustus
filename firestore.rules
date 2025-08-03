@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+    // Fungsi untuk mendapatkan peran pengguna dari koleksi 'users'.
+    function getUserRole() {
+      // Mengakses dokumen pengguna berdasarkan UID mereka yang terautentikasi.
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // --- Collection: users ---
+    // Aturan untuk koleksi yang menyimpan peran pengguna.
+    match /users/{userId} {
+      // Pengguna hanya dapat membaca data peran mereka sendiri.
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Menulis/mengubah peran dari sisi klien dilarang untuk mencegah pengguna mengubah perannya sendiri.
+      allow write: if false;
+    }
+
+    // --- Collection: event transactions ---
+    // Aturan untuk data transaksi (uang masuk dan uang keluar).
+    match /events/{eventId}/{collection}/{transactionId} {
+
+      // READ: Siapa pun boleh membaca data (admin, editor, dan visitor).
+      // Ini mendukung fitur "Masuk sebagai Visitor" dan transparansi data.
+      allow read: if true;
+
+      // CREATE: Hanya 'admin' dan 'editor' yang dapat membuat data baru.
+      // Data baru harus memiliki status 'active'.
+      allow create: if request.auth != null && getUserRole() in ['admin', 'editor']
+                    && request.resource.data.status == 'active';
+
+      // UPDATE: Admin bisa update apa saja. Editor hanya bisa update data yang 'active'.
+      allow update: if request.auth != null && (getUserRole() == 'admin' || (getUserRole() == 'editor' && resource.data.status == 'active'));
+
+      // DELETE: Hanya 'admin' yang bisa menghapus data secara permanen.
+      allow delete: if request.auth != null && getUserRole() == 'admin';
+    }
+  }
+}
