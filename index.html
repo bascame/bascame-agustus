@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -119,6 +120,7 @@
             </div>
             <nav class="flex-1 px-4 py-4 space-y-2">
                 <a href="#" id="menu-dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10v11h6v-7h6v7h6V10L12 3 3 10z"/></svg>Dashboard</a>
+                <a href="#" id="menu-uang-masuk" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1m0-1H9.5a2.5 2.5 0 00-2.5 2.5V17.5a2.5 2.5 0 002.5 2.5h5A2.5 2.5 0 0017 17.5v-2.5a2.5 2.5 0 00-2.5-2.5H12"></path></svg>Uang Masuk</a>
                 <a href="#" id="menu-uang-muka" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1m0-1H9.5a2.5 2.5 0 00-2.5 2.5V17.5a2.5 2.5 0 002.5 2.5h5A2.5 2.5 0 0017 17.5v-2.5a2.5 2.5 0 00-2.5-2.5H12" /></svg>Uang Muka</a>
                 <a href="#" id="menu-uang-keluar" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2m-4-4l-4 4m0 0l4 4m-4-4h12" /></svg>Uang Keluar</a>
                 <a href="#" id="menu-donatur" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 19.5v-8.25a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 11.25z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v-3.75m0 0a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" /></svg>Daftar Donatur</a>
@@ -144,8 +146,51 @@
                 </div>
             </header>
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6 lg:p-8">
-                <div id="content-dashboard"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"><div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-green-100 p-3 rounded-full"><svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Total Pemasukan</h3><p id="summary-pemasukan" class="text-2xl font-bold text-gray-900"></p></div></div></div><div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-red-100 p-3 rounded-full"><svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Total Uang Keluar</h3><p id="summary-keluar" class="text-2xl font-bold text-gray-900"></p></div></div></div><div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-blue-100 p-3 rounded-full"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Saldo Akhir</h3><p id="summary-saldo" class="text-2xl font-bold text-gray-900"></p></div></div></div></div></div>
+                <div id="content-dashboard" class="space-y-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-green-100 p-3 rounded-full"><svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Total Pemasukan</h3><p id="summary-pemasukan" class="text-2xl font-bold text-gray-900"></p></div></div></div>
+                        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-red-100 p-3 rounded-full"><svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Total Uang Keluar</h3><p id="summary-keluar" class="text-2xl font-bold text-gray-900"></p></div></div></div>
+                        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-blue-100 p-3 rounded-full"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Saldo Akhir</h3><p id="summary-saldo" class="text-2xl font-bold text-gray-900"></p></div></div></div>
+                    </div>
+                    <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Grafik Visualisasi Anggaran</h3>
+                        <div class="h-96 relative">
+                           <canvas id="financial-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
                 
+                <div id="content-uang-masuk" class="hidden space-y-6">
+                    <div id="form-container-masuk" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <h2 id="form-title-masuk" class="text-xl font-bold mb-4 text-gray-800">Tambah Data Uang Masuk</h2>
+                        <form id="form-masuk" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2"><label for="desc-masuk" class="block text-sm font-medium text-gray-700">Keterangan</label><input type="text" id="desc-masuk" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div>
+                            <div><label for="amount-masuk" class="block text-sm font-medium text-gray-700">Jumlah Pemasukan (Rp)</label><input type="number" id="amount-masuk" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div>
+                            <div class="md:col-span-2 flex justify-end space-x-3 pt-2">
+                                <button type="button" id="cancel-edit-masuk" class="hidden bg-gray-600 text-white font-medium py-2 px-4 rounded-lg">Batal</button>
+                                <button type="submit" id="submit-masuk" class="bg-brand-red-700 text-white font-medium py-2 px-4 rounded-lg">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-4"><input type="text" id="search-masuk" placeholder="Cari berdasarkan keterangan..." class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red-500"></div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="p-4 text-left font-semibold text-gray-600">No</th>
+                                        <th class="p-4 text-left font-semibold text-gray-600">Keterangan</th>
+                                        <th class="p-4 text-right font-semibold text-gray-600">Jumlah</th>
+                                        <th class="p-4 text-left font-semibold text-gray-600">Tanggal</th>
+                                        <th id="aksi-header-masuk" class="p-4 text-center font-semibold text-gray-600">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-masuk" class="divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="content-uang-muka" class="hidden space-y-6">
                     <div id="form-container-muka" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200"><h2 id="form-title-muka" class="text-xl font-bold mb-4 text-gray-800">Tambah Data Uang Muka</h2><form id="form-muka" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="md:col-span-2"><label for="desc-muka" class="block text-sm font-medium text-gray-700">Keterangan</label><input type="text" id="desc-muka" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div><div><label for="total-muka" class="block text-sm font-medium text-gray-700">Total Tagihan (Rp)</label><input type="number" id="total-muka" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div><div><label for="dp-muka" class="block text-sm font-medium text-gray-700">Uang Muka (Rp)</label><input type="number" id="dp-muka" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div><div class="md:col-span-2 flex justify-end space-x-3 pt-2"><button type="button" id="cancel-edit-muka" class="hidden bg-gray-600 text-white font-medium py-2 px-4 rounded-lg">Batal</button><button type="submit" id="submit-muka" class="bg-brand-red-700 text-white font-medium py-2 px-4 rounded-lg">Tambah</button></div></form></div>
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"><div class="p-4"><input type="text" id="search-muka" placeholder="Cari berdasarkan keterangan..." class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red-500"></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-gray-50"><th class="p-4 text-left font-semibold text-gray-600">No</th><th class="p-4 text-left font-semibold text-gray-600">Keterangan</th><th class="p-4 text-right font-semibold text-gray-600">Total Tagihan</th><th class="p-4 text-right font-semibold text-gray-600">Uang Muka</th><th class="p-4 text-right font-semibold text-gray-600">Sisa</th><th id="aksi-header-muka" class="p-4 text-center font-semibold text-gray-600">Aksi</th></tr></thead><tbody id="table-body-muka" class="divide-y divide-gray-200"></tbody></table></div></div>
@@ -230,14 +275,16 @@
         const db = getFirestore(app);
 
         const usersCol = collection(db, 'users');
+        const uangMasukCol = collection(db, `events/${firebaseConfig.projectId}/uangMasuk`);
         const uangMukaCol = collection(db, `events/${firebaseConfig.projectId}/uangMuka`);
         const uangKeluarCol = collection(db, `events/${firebaseConfig.projectId}/uangKeluar`);
         const donaturCol = collection(db, `events/${firebaseConfig.projectId}/donations`);
 
-        let currentUser = null, userRole = null, editingMukaId = null, editingKeluarId = null, editingDonaturId = null;
-        let unsubscribeMuka = null, unsubscribeKeluar = null, unsubscribeDonatur = null;
-        let allDataMuka = [], allDataKeluar = [], allDataDonatur = [];
-        let searchTermMuka = '', searchTermKeluar = '', searchTermDonatur = '';
+        let currentUser = null, userRole = null, editingMasukId = null, editingMukaId = null, editingKeluarId = null, editingDonaturId = null;
+        let unsubscribeMasuk = null, unsubscribeMuka = null, unsubscribeKeluar = null, unsubscribeDonatur = null;
+        let allDataMasuk = [], allDataMuka = [], allDataKeluar = [], allDataDonatur = [];
+        let searchTermMasuk = '', searchTermMuka = '', searchTermKeluar = '', searchTermDonatur = '';
+        let financialChartInstance = null;
         
         const $ = (selector) => document.querySelector(selector);
 
@@ -259,8 +306,18 @@
         const notification = $('#notification');
         const notificationMessage = $('#notification-message');
 
-        const menus = { dashboard: $('#menu-dashboard'), muka: $('#menu-uang-muka'), keluar: $('#menu-uang-keluar'), donatur: $('#menu-donatur'), profile: $('#menu-profile') };
-        const contents = { dashboard: $('#content-dashboard'), muka: $('#content-uang-muka'), keluar: $('#content-uang-keluar'), donatur: $('#content-donatur'), profile: $('#content-profile') };
+        const menus = { dashboard: $('#menu-dashboard'), masuk: $('#menu-uang-masuk'), muka: $('#menu-uang-muka'), keluar: $('#menu-uang-keluar'), donatur: $('#menu-donatur'), profile: $('#menu-profile') };
+        const contents = { dashboard: $('#content-dashboard'), masuk: $('#content-uang-masuk'), muka: $('#content-uang-muka'), keluar: $('#content-uang-keluar'), donatur: $('#content-donatur'), profile: $('#content-profile') };
+        
+        const formContainerMasuk = $('#form-container-masuk');
+        const formMasuk = $('#form-masuk');
+        const descMasukInput = $('#desc-masuk');
+        const amountMasukInput = $('#amount-masuk');
+        const tableBodyMasuk = $('#table-body-masuk');
+        const formTitleMasuk = $('#form-title-masuk');
+        const submitMasukBtn = $('#submit-masuk');
+        const cancelEditMasukBtn = $('#cancel-edit-masuk');
+        const aksiHeaderMasuk = $('#aksi-header-masuk');
         
         const formContainerMuka = $('#form-container-muka');
         const formMuka = $('#form-muka');
@@ -293,6 +350,7 @@
         const cancelEditDonaturBtn = $('#cancel-edit-donatur');
         const aksiHeaderDonatur = $('#aksi-header-donatur');
 
+        const searchMasukInput = $('#search-masuk');
         const searchMukaInput = $('#search-muka');
         const searchKeluarInput = $('#search-keluar');
         const searchDonaturInput = $('#search-donatur');
@@ -349,19 +407,136 @@
         const renderUI = () => {
             if (!userRole) return;
             renderDashboard();
+            renderTableMasuk();
             renderTableMuka();
             renderTableKeluar();
             renderTableDonatur();
+            renderDashboardChart();
         };
 
         const renderDashboard = () => {
-            const totalPemasukan = allDataMuka.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.downPayment, 0);
+            const totalMasuk = allDataMasuk.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
+            const totalMuka = allDataMuka.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.downPayment, 0);
             const totalDonasi = allDataDonatur.reduce((sum, donor) => sum + donor.amount, 0);
             const totalKeluar = allDataKeluar.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
-            const saldoAkhir = totalPemasukan + totalDonasi - totalKeluar;
-            $('#summary-pemasukan').textContent = formatCurrency(totalPemasukan + totalDonasi);
+            const saldoAkhir = totalMasuk + totalMuka + totalDonasi - totalKeluar;
+            $('#summary-pemasukan').textContent = formatCurrency(totalMasuk + totalMuka + totalDonasi);
             $('#summary-keluar').textContent = formatCurrency(totalKeluar);
             $('#summary-saldo').textContent = formatCurrency(saldoAkhir);
+        };
+
+        const renderDashboardChart = () => {
+            const ctx = document.getElementById('financial-chart').getContext('2d');
+            
+            const monthlyData = {};
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            const processData = (data, amountField, dateField, type) => {
+                 data.forEach(item => {
+                    if ((item.status && item.status !== 'active') || !item[dateField]?.seconds) return;
+                    
+                    const date = new Date(item[dateField].seconds * 1000);
+                    const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+                    if (!monthlyData[monthKey]) {
+                        monthlyData[monthKey] = { income: 0, outcome: 0 };
+                    }
+                    monthlyData[monthKey][type] += item[amountField];
+                });
+            };
+
+            processData(allDataMasuk, 'amount', 'createdAt', 'income');
+            processData(allDataMuka, 'downPayment', 'createdAt', 'income');
+            processData(allDataDonatur, 'amount', 'date', 'income');
+            processData(allDataKeluar, 'amount', 'createdAt', 'outcome');
+            
+            const sortedLabels = Object.keys(monthlyData).sort((a, b) => {
+                const [monthA, yearA] = a.split(' ');
+                const [monthB, yearB] = b.split(' ');
+                return new Date(`${monthA} 1, ${yearA}`) - new Date(`${monthB} 1, ${yearB}`);
+            });
+
+            const incomeData = sortedLabels.map(label => monthlyData[label].income);
+            const outcomeData = sortedLabels.map(label => monthlyData[label].outcome);
+
+            if (financialChartInstance) {
+                financialChartInstance.destroy();
+            }
+
+            financialChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedLabels,
+                    datasets: [
+                        {
+                            label: 'Pemasukan',
+                            data: incomeData,
+                            backgroundColor: 'rgba(34, 197, 94, 0.6)',
+                            borderColor: 'rgba(34, 197, 94, 1)',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                        },
+                        {
+                            label: 'Pengeluaran',
+                            data: outcomeData,
+                            backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += formatCurrency(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        const renderTableMasuk = () => {
+            tableBodyMasuk.innerHTML = '';
+            const filteredData = allDataMasuk.filter(trx => trx.description.toLowerCase().includes(searchTermMasuk.toLowerCase()));
+            filteredData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0)).forEach((trx, index) => {
+                const rowClass = trx.status === 'pending_deletion' ? 'pending-deletion' : '';
+                let aksiButtons = '';
+                if (userRole === 'admin') {
+                    aksiButtons = trx.status === 'pending_deletion'
+                        ? `<button onclick="window.handleApproveDelete('masuk', '${trx.id}')" class="font-medium text-green-600 hover:text-green-800 mr-3">Setujui</button><button onclick="window.handleRejectDelete('masuk', '${trx.id}')" class="font-medium text-red-600 hover:text-red-800">Tolak</button>`
+                        : `<button onclick="window.handleEdit('masuk', '${trx.id}')" class="font-medium text-blue-600 hover:text-blue-800 mr-3">Edit</button><button onclick="window.handleDelete('masuk', '${trx.id}')" class="font-medium text-red-600 hover:text-red-800">Hapus</button>`;
+                } else if (userRole === 'editor') {
+                    aksiButtons = trx.status !== 'pending_deletion'
+                        ? `<button onclick="window.handleEdit('masuk', '${trx.id}')" class="font-medium text-blue-600 hover:text-blue-800 mr-3">Edit</button><button onclick="window.handleDelete('masuk', '${trx.id}')" class="font-medium text-red-600 hover:text-red-800">Hapus</button>`
+                        : `<span class="text-gray-500">Menunggu</span>`;
+                }
+                const row = `<tr class="${rowClass} hover:bg-gray-50"><td class="p-4 text-gray-700">${index + 1}</td><td class="p-4 text-gray-900 font-medium">${trx.description}</td><td class="p-4 text-right font-semibold text-green-600">${formatCurrency(trx.amount)}</td><td class="p-4 text-gray-600">${formatDate(trx.createdAt)}</td>${userRole !== 'visitor' ? `<td class="p-4 text-center">${aksiButtons}</td>` : ''}</tr>`;
+                tableBodyMasuk.innerHTML += row;
+            });
         };
 
         const renderTableMuka = () => {
@@ -434,9 +609,11 @@
 
         const setupUIForRole = () => {
             const isEditorOrAdmin = userRole === 'admin' || userRole === 'editor';
+            formContainerMasuk.style.display = isEditorOrAdmin ? 'block' : 'none';
             formContainerMuka.style.display = isEditorOrAdmin ? 'block' : 'none';
             formContainerKeluar.style.display = isEditorOrAdmin ? 'block' : 'none';
             formContainerDonatur.style.display = isEditorOrAdmin ? 'block' : 'none';
+            aksiHeaderMasuk.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
             aksiHeaderMuka.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
             aksiHeaderKeluar.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
             aksiHeaderDonatur.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
@@ -456,7 +633,7 @@
         };
 
         const switchPage = (pageKey) => {
-            const pageTitles = { dashboard: 'Dashboard', muka: 'Manajemen Uang Muka', keluar: 'Manajemen Uang Keluar', donatur: 'Daftar Donatur', profile: 'Profil Pengguna' };
+            const pageTitles = { dashboard: 'Dashboard', masuk: 'Manajemen Uang Masuk', muka: 'Manajemen Uang Muka', keluar: 'Manajemen Uang Keluar', donatur: 'Daftar Donatur', profile: 'Profil Pengguna' };
             pageTitle.textContent = pageTitles[pageKey];
             Object.keys(contents).forEach(key => {
                 contents[key].classList.toggle('hidden', key !== pageKey);
@@ -485,6 +662,12 @@
         };
 
         const initializeDataListeners = () => {
+            if (unsubscribeMasuk) unsubscribeMasuk();
+            unsubscribeMasuk = onSnapshot(uangMasukCol, (snapshot) => {
+                allDataMasuk = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if(userRole) renderUI();
+            });
+
             if (unsubscribeMuka) unsubscribeMuka();
             unsubscribeMuka = onSnapshot(uangMukaCol, (snapshot) => {
                 allDataMuka = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -521,6 +704,7 @@
                 }
             } else {
                 userRole = null;
+                if (unsubscribeMasuk) unsubscribeMasuk();
                 if (unsubscribeMuka) unsubscribeMuka();
                 if (unsubscribeKeluar) unsubscribeKeluar();
                 if (unsubscribeDonatur) unsubscribeDonatur();
@@ -566,7 +750,17 @@
             if (userRole !== 'admin' && userRole !== 'editor') return;
             showLoading(true);
             try {
-                if (type === 'muka') {
+                if (type === 'masuk') {
+                    const data = { description: descMasukInput.value, amount: parseFloat(amountMasukInput.value), status: 'active', createdAt: serverTimestamp() };
+                    if (editingMasukId) {
+                        await updateDoc(doc(uangMasukCol, editingMasukId), data);
+                        showNotification('Data uang masuk berhasil diperbarui.');
+                    } else {
+                        await addDoc(uangMasukCol, data);
+                        showNotification('Data uang masuk berhasil ditambahkan.');
+                    }
+                    resetForm('masuk');
+                } else if (type === 'muka') {
                     const data = { description: descMukaInput.value, totalAmount: parseFloat(totalMukaInput.value), downPayment: parseFloat(dpMukaInput.value), status: 'active', createdAt: serverTimestamp() };
                     if (editingMukaId) {
                         await updateDoc(doc(uangMukaCol, editingMukaId), data);
@@ -606,7 +800,13 @@
         };
         
         const resetForm = (type) => {
-            if (type === 'muka') {
+            if (type === 'masuk') {
+                editingMasukId = null;
+                formMasuk.reset();
+                formTitleMasuk.textContent = 'Tambah Data Uang Masuk';
+                submitMasukBtn.textContent = 'Tambah';
+                cancelEditMasukBtn.classList.add('hidden');
+            } else if (type === 'muka') {
                 editingMukaId = null;
                 formMuka.reset();
                 formTitleMuka.textContent = 'Tambah Data Uang Muka';
@@ -629,11 +829,19 @@
 
         window.handleEdit = async (type, id) => {
             showLoading(true);
-            const colRef = type === 'muka' ? uangMukaCol : type === 'keluar' ? uangKeluarCol : donaturCol;
+            const colRef = type === 'masuk' ? uangMasukCol : type === 'muka' ? uangMukaCol : type === 'keluar' ? uangKeluarCol : donaturCol;
             const docSnap = await getDoc(doc(colRef, id));
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                if (type === 'muka') {
+                if (type === 'masuk') {
+                    editingMasukId = id;
+                    descMasukInput.value = data.description;
+                    amountMasukInput.value = data.amount;
+                    formTitleMasuk.textContent = 'Edit Data Uang Masuk';
+                    submitMasukBtn.textContent = 'Update';
+                    cancelEditMasukBtn.classList.remove('hidden');
+                    descMasukInput.focus();
+                } else if (type === 'muka') {
                     editingMukaId = id;
                     descMukaInput.value = data.description;
                     totalMukaInput.value = data.totalAmount;
@@ -664,20 +872,18 @@
         };
 
         window.handleDelete = async (type, id) => {
-            const colRef = type === 'muka' ? uangMukaCol : type === 'keluar' ? uangKeluarCol : donaturCol;
+            const colRef = type === 'masuk' ? uangMasukCol : type === 'muka' ? uangMukaCol : type === 'keluar' ? uangKeluarCol : donaturCol;
             
-            // For Donatur, only admin can delete directly.
-            if (type === 'donatur') {
+            if (type === 'donatur' || type === 'masuk') {
                 if (userRole === 'admin') {
-                    showConfirmationModal('Hapus Donatur', 'Yakin ingin menghapus data donatur ini secara permanen?', async () => {
+                    showConfirmationModal(`Hapus ${type === 'donatur' ? 'Donatur' : 'Uang Masuk'}`, `Yakin ingin menghapus data ini secara permanen?`, async () => {
                         await deleteDoc(doc(colRef, id));
-                        showNotification('Data donatur berhasil dihapus.');
+                        showNotification(`Data ${type === 'donatur' ? 'donatur' : 'uang masuk'} berhasil dihapus.`);
                     });
                 }
                 return;
             }
 
-            // For other types (muka, keluar)
             if (userRole === 'admin') {
                 showConfirmationModal('Hapus Permanen', 'Yakin ingin menghapus data ini secara permanen?', async () => {
                     await deleteDoc(doc(colRef, id));
@@ -692,13 +898,13 @@
         };
         
         window.handleApproveDelete = async (type, id) => {
-            const colRef = type === 'muka' ? uangMukaCol : uangKeluarCol;
+            const colRef = type === 'masuk' ? uangMasukCol : type === 'muka' ? uangMukaCol : uangKeluarCol;
             await deleteDoc(doc(colRef, id));
             showNotification('Permintaan hapus disetujui. Data dihapus.');
         };
         
         window.handleRejectDelete = async (type, id) => {
-            const colRef = type === 'muka' ? uangMukaCol : uangKeluarCol;
+            const colRef = type === 'masuk' ? uangMasukCol : type === 'muka' ? uangMukaCol : uangKeluarCol;
             await updateDoc(doc(colRef, id), { status: 'active' });
             showNotification('Permintaan hapus ditolak.');
         };
@@ -728,6 +934,8 @@
             menus[key].addEventListener('click', (e) => { e.preventDefault(); switchPage(key); });
         });
 
+        formMasuk.addEventListener('submit', (e) => handleFormSubmit('masuk', e));
+        cancelEditMasukBtn.addEventListener('click', () => resetForm('masuk'));
         formMuka.addEventListener('submit', (e) => handleFormSubmit('muka', e));
         cancelEditMukaBtn.addEventListener('click', () => resetForm('muka'));
         formKeluar.addEventListener('submit', (e) => handleFormSubmit('keluar', e));
@@ -735,6 +943,7 @@
         formDonatur.addEventListener('submit', (e) => handleFormSubmit('donatur', e));
         cancelEditDonaturBtn.addEventListener('click', () => resetForm('donatur'));
 
+        searchMasukInput.addEventListener('input', (e) => { searchTermMasuk = e.target.value; renderTableMasuk(); });
         searchMukaInput.addEventListener('input', (e) => { searchTermMuka = e.target.value; renderTableMuka(); });
         searchKeluarInput.addEventListener('input', (e) => { searchTermKeluar = e.target.value; renderTableKeluar(); });
         searchDonaturInput.addEventListener('input', (e) => { searchTermDonatur = e.target.value; renderTableDonatur(); });
