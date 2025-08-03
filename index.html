@@ -121,6 +121,7 @@
                 <a href="#" id="menu-dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10v11h6v-7h6v7h6V10L12 3 3 10z"/></svg>Dashboard</a>
                 <a href="#" id="menu-uang-muka" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1m0-1H9.5a2.5 2.5 0 00-2.5 2.5V17.5a2.5 2.5 0 002.5 2.5h5A2.5 2.5 0 0017 17.5v-2.5a2.5 2.5 0 00-2.5-2.5H12" /></svg>Uang Muka</a>
                 <a href="#" id="menu-uang-keluar" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2m-4-4l-4 4m0 0l4 4m-4-4h12" /></svg>Uang Keluar</a>
+                <a href="#" id="menu-donatur" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 19.5v-8.25a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 11.25z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v-3.75m0 0a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" /></svg>Daftar Donatur</a>
                 <a href="#" id="menu-profile" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>Profil Pengguna</a>
             </nav>
             <div class="px-4 py-4 mt-auto border-t border-brand-red-900/50">
@@ -153,6 +154,39 @@
                 <div id="content-uang-keluar" class="hidden space-y-6">
                     <div id="form-container-keluar" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200"><h2 id="form-title-keluar" class="text-xl font-bold mb-4 text-gray-800">Tambah Data Uang Keluar</h2><form id="form-keluar" class="grid grid-cols-1 gap-4"><div class="md:col-span-2"><label for="desc-keluar" class="block text-sm font-medium text-gray-700">Keterangan Pengeluaran</label><input type="text" id="desc-keluar" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div><div class="md:col-span-2"><label for="total-keluar" class="block text-sm font-medium text-gray-700">Jumlah Pengeluaran (Rp)</label><input type="number" id="total-keluar" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div><div class="md:col-span-2 flex justify-end space-x-3 pt-2"><button type="button" id="cancel-edit-keluar" class="hidden bg-gray-600 text-white font-medium py-2 px-4 rounded-lg">Batal</button><button type="submit" id="submit-keluar" class="bg-brand-red-700 text-white font-medium py-2 px-4 rounded-lg">Tambah</button></div></form></div>
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"><div class="p-4"><input type="text" id="search-keluar" placeholder="Cari berdasarkan keterangan..." class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red-500"></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-gray-50"><th class="p-4 text-left font-semibold text-gray-600">No</th><th class="p-4 text-left font-semibold text-gray-600">Keterangan</th><th class="p-4 text-right font-semibold text-gray-600">Jumlah</th><th id="aksi-header-keluar" class="p-4 text-center font-semibold text-gray-600">Aksi</th></tr></thead><tbody id="table-body-keluar" class="divide-y divide-gray-200"></tbody></table></div></div>
+                </div>
+
+                <div id="content-donatur" class="hidden space-y-6">
+                    <div id="form-container-donatur" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <h2 id="form-title-donatur" class="text-xl font-bold mb-4 text-gray-800">Tambah Data Donatur</h2>
+                        <form id="form-donatur" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2"><label for="name-donatur" class="block text-sm font-medium text-gray-700">Nama Donatur</label><input type="text" id="name-donatur" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div>
+                            <div><label for="amount-donatur" class="block text-sm font-medium text-gray-700">Jumlah Donasi (Rp)</label><input type="number" id="amount-donatur" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" required></div>
+                            <div class="md:col-span-2 flex justify-end space-x-3 pt-2">
+                                <button type="button" id="cancel-edit-donatur" class="hidden bg-gray-600 text-white font-medium py-2 px-4 rounded-lg">Batal</button>
+                                <button type="submit" id="submit-donatur" class="bg-brand-red-700 text-white font-medium py-2 px-4 rounded-lg">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-4">
+                            <input type="text" id="search-donatur" placeholder="Cari berdasarkan nama donatur..." class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red-500">
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="p-4 text-left font-semibold text-gray-600">No</th>
+                                        <th class="p-4 text-left font-semibold text-gray-600">Nama Donatur</th>
+                                        <th class="p-4 text-right font-semibold text-gray-600">Jumlah Donasi</th>
+                                        <th class="p-4 text-left font-semibold text-gray-600">Tanggal</th>
+                                        <th id="aksi-header-donatur" class="p-4 text-center font-semibold text-gray-600">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-donatur" class="divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="content-profile" class="hidden">
@@ -198,15 +232,14 @@
         const usersCol = collection(db, 'users');
         const uangMukaCol = collection(db, `events/${firebaseConfig.projectId}/uangMuka`);
         const uangKeluarCol = collection(db, `events/${firebaseConfig.projectId}/uangKeluar`);
+        const donaturCol = collection(db, `events/${firebaseConfig.projectId}/donations`);
 
-        let currentUser = null, userRole = null, editingMukaId = null, editingKeluarId = null;
-        let unsubscribeMuka = null, unsubscribeKeluar = null;
-        let allDataMuka = [], allDataKeluar = [];
-        let searchTermMuka = '', searchTermKeluar = '';
-        let currentDeleteInfo = {};
-
+        let currentUser = null, userRole = null, editingMukaId = null, editingKeluarId = null, editingDonaturId = null;
+        let unsubscribeMuka = null, unsubscribeKeluar = null, unsubscribeDonatur = null;
+        let allDataMuka = [], allDataKeluar = [], allDataDonatur = [];
+        let searchTermMuka = '', searchTermKeluar = '', searchTermDonatur = '';
+        
         const $ = (selector) => document.querySelector(selector);
-        const $$ = (selector) => document.querySelectorAll(selector);
 
         const loadingOverlay = $('#loading-overlay');
         const loginPage = $('#login-page');
@@ -226,8 +259,8 @@
         const notification = $('#notification');
         const notificationMessage = $('#notification-message');
 
-        const menus = { dashboard: $('#menu-dashboard'), muka: $('#menu-uang-muka'), keluar: $('#menu-uang-keluar'), profile: $('#menu-profile') };
-        const contents = { dashboard: $('#content-dashboard'), muka: $('#content-uang-muka'), keluar: $('#content-uang-keluar'), profile: $('#content-profile') };
+        const menus = { dashboard: $('#menu-dashboard'), muka: $('#menu-uang-muka'), keluar: $('#menu-uang-keluar'), donatur: $('#menu-donatur'), profile: $('#menu-profile') };
+        const contents = { dashboard: $('#content-dashboard'), muka: $('#content-uang-muka'), keluar: $('#content-uang-keluar'), donatur: $('#content-donatur'), profile: $('#content-profile') };
         
         const formContainerMuka = $('#form-container-muka');
         const formMuka = $('#form-muka');
@@ -250,8 +283,19 @@
         const cancelEditKeluarBtn = $('#cancel-edit-keluar');
         const aksiHeaderKeluar = $('#aksi-header-keluar');
 
+        const formContainerDonatur = $('#form-container-donatur');
+        const formDonatur = $('#form-donatur');
+        const nameDonaturInput = $('#name-donatur');
+        const amountDonaturInput = $('#amount-donatur');
+        const tableBodyDonatur = $('#table-body-donatur');
+        const formTitleDonatur = $('#form-title-donatur');
+        const submitDonaturBtn = $('#submit-donatur');
+        const cancelEditDonaturBtn = $('#cancel-edit-donatur');
+        const aksiHeaderDonatur = $('#aksi-header-donatur');
+
         const searchMukaInput = $('#search-muka');
         const searchKeluarInput = $('#search-keluar');
+        const searchDonaturInput = $('#search-donatur');
         
         const mobileMenuButton = $('#mobile-menu-button');
         const sidebar = $('#sidebar');
@@ -265,6 +309,12 @@
         const passwordMessage = $('#password-message');
 
         const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        const formatDate = (timestamp) => {
+            if (!timestamp || !timestamp.seconds) return 'N/A';
+            return new Date(timestamp.seconds * 1000).toLocaleDateString('id-ID', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+        };
         const showLoading = (show) => loadingOverlay.classList.toggle('hidden', !show);
         
         const showNotification = (message, isSuccess = true) => {
@@ -301,13 +351,15 @@
             renderDashboard();
             renderTableMuka();
             renderTableKeluar();
+            renderTableDonatur();
         };
 
         const renderDashboard = () => {
             const totalPemasukan = allDataMuka.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.downPayment, 0);
+            const totalDonasi = allDataDonatur.reduce((sum, donor) => sum + donor.amount, 0);
             const totalKeluar = allDataKeluar.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
-            const saldoAkhir = totalPemasukan - totalKeluar;
-            $('#summary-pemasukan').textContent = formatCurrency(totalPemasukan);
+            const saldoAkhir = totalPemasukan + totalDonasi - totalKeluar;
+            $('#summary-pemasukan').textContent = formatCurrency(totalPemasukan + totalDonasi);
             $('#summary-keluar').textContent = formatCurrency(totalKeluar);
             $('#summary-saldo').textContent = formatCurrency(saldoAkhir);
         };
@@ -357,12 +409,37 @@
             });
         };
 
+        const renderTableDonatur = () => {
+            tableBodyDonatur.innerHTML = '';
+            const filteredData = allDataDonatur.filter(donor => donor.name.toLowerCase().includes(searchTermDonatur.toLowerCase()));
+            filteredData.sort((a, b) => (a.date?.seconds || 0) - (b.date?.seconds || 0)).forEach((donor, index) => {
+                let aksiButtons = '';
+                if (userRole === 'admin' || userRole === 'editor') {
+                    aksiButtons = `<button onclick="window.handleEdit('donatur', '${donor.id}')" class="font-medium text-blue-600 hover:text-blue-800 mr-3">Edit</button>`;
+                }
+                if (userRole === 'admin') {
+                    aksiButtons += `<button onclick="window.handleDelete('donatur', '${donor.id}')" class="font-medium text-red-600 hover:text-red-800">Hapus</button>`;
+                }
+
+                const row = `<tr class="hover:bg-gray-50">
+                    <td class="p-4 text-gray-700">${index + 1}</td>
+                    <td class="p-4 text-gray-900 font-medium">${donor.name}</td>
+                    <td class="p-4 text-right text-green-600 font-semibold">${formatCurrency(donor.amount)}</td>
+                    <td class="p-4 text-gray-600">${formatDate(donor.date)}</td>
+                    ${userRole !== 'visitor' ? `<td class="p-4 text-center">${aksiButtons}</td>` : ''}
+                </tr>`;
+                tableBodyDonatur.innerHTML += row;
+            });
+        };
+
         const setupUIForRole = () => {
             const isEditorOrAdmin = userRole === 'admin' || userRole === 'editor';
             formContainerMuka.style.display = isEditorOrAdmin ? 'block' : 'none';
             formContainerKeluar.style.display = isEditorOrAdmin ? 'block' : 'none';
+            formContainerDonatur.style.display = isEditorOrAdmin ? 'block' : 'none';
             aksiHeaderMuka.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
             aksiHeaderKeluar.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
+            aksiHeaderDonatur.style.display = userRole !== 'visitor' ? 'table-cell' : 'none';
 
             const roles = { admin: 'Admin', editor: 'Editor', visitor: 'Visitor' };
             const colors = { admin: 'bg-red-100 text-red-700', editor: 'bg-blue-100 text-blue-700', visitor: 'bg-gray-200 text-gray-700' };
@@ -379,15 +456,12 @@
         };
 
         const switchPage = (pageKey) => {
-            const pageTitles = { dashboard: 'Dashboard', muka: 'Manajemen Uang Muka', keluar: 'Manajemen Uang Keluar', profile: 'Profil Pengguna' };
+            const pageTitles = { dashboard: 'Dashboard', muka: 'Manajemen Uang Muka', keluar: 'Manajemen Uang Keluar', donatur: 'Daftar Donatur', profile: 'Profil Pengguna' };
             pageTitle.textContent = pageTitles[pageKey];
             Object.keys(contents).forEach(key => {
                 contents[key].classList.toggle('hidden', key !== pageKey);
                 if (menus[key]) {
-                    // FIX: Remove all possible state classes first
                     menus[key].classList.remove('bg-brand-red-900', 'text-white', 'text-red-200', 'hover:bg-brand-red-700', 'hover:text-white');
-                    
-                    // FIX: Apply classes correctly without using space-separated strings in .add()
                     if (key === pageKey) {
                         menus[key].classList.add('bg-brand-red-900', 'text-white');
                     } else {
@@ -415,13 +489,19 @@
             unsubscribeMuka = onSnapshot(uangMukaCol, (snapshot) => {
                 allDataMuka = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 if(userRole) renderUI();
-            }, (error) => console.error("Error listening to uangMuka:", error));
+            });
 
             if (unsubscribeKeluar) unsubscribeKeluar();
             unsubscribeKeluar = onSnapshot(uangKeluarCol, (snapshot) => {
                 allDataKeluar = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 if(userRole) renderUI();
-            }, (error) => console.error("Error listening to uangKeluar:", error));
+            });
+
+            if (unsubscribeDonatur) unsubscribeDonatur();
+            unsubscribeDonatur = onSnapshot(donaturCol, (snapshot) => {
+                allDataDonatur = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if(userRole) renderUI();
+            });
         };
 
         onAuthStateChanged(auth, async (user) => {
@@ -443,6 +523,7 @@
                 userRole = null;
                 if (unsubscribeMuka) unsubscribeMuka();
                 if (unsubscribeKeluar) unsubscribeKeluar();
+                if (unsubscribeDonatur) unsubscribeDonatur();
                 loginPage.classList.remove('hidden');
                 dashboardPage.classList.add('hidden');
                 loginForm.reset();
@@ -486,13 +567,7 @@
             showLoading(true);
             try {
                 if (type === 'muka') {
-                    const totalAmount = parseFloat(totalMukaInput.value);
-                    const downPayment = parseFloat(dpMukaInput.value);
-                    if (downPayment > totalAmount) {
-                        showNotification('Uang muka tidak boleh lebih besar dari total tagihan.', false);
-                        showLoading(false); return;
-                    }
-                    const data = { description: descMukaInput.value, totalAmount, downPayment, status: 'active', createdAt: serverTimestamp() };
+                    const data = { description: descMukaInput.value, totalAmount: parseFloat(totalMukaInput.value), downPayment: parseFloat(dpMukaInput.value), status: 'active', createdAt: serverTimestamp() };
                     if (editingMukaId) {
                         await updateDoc(doc(uangMukaCol, editingMukaId), data);
                         showNotification('Data uang muka berhasil diperbarui.');
@@ -511,8 +586,19 @@
                         showNotification('Data uang keluar berhasil ditambahkan.');
                     }
                     resetForm('keluar');
+                } else if (type === 'donatur') {
+                    const data = { name: nameDonaturInput.value, amount: parseFloat(amountDonaturInput.value), date: serverTimestamp() };
+                     if (editingDonaturId) {
+                        await updateDoc(doc(donaturCol, editingDonaturId), data);
+                        showNotification('Data donatur berhasil diperbarui.');
+                    } else {
+                        await addDoc(donaturCol, data);
+                        showNotification('Data donatur berhasil ditambahkan.');
+                    }
+                    resetForm('donatur');
                 }
             } catch (error) {
+                console.error("Error submitting form:", error);
                 showNotification('Gagal menyimpan data.', false);
             } finally {
                 showLoading(false);
@@ -532,39 +618,66 @@
                 formTitleKeluar.textContent = 'Tambah Data Uang Keluar';
                 submitKeluarBtn.textContent = 'Tambah';
                 cancelEditKeluarBtn.classList.add('hidden');
+            } else if (type === 'donatur') {
+                editingDonaturId = null;
+                formDonatur.reset();
+                formTitleDonatur.textContent = 'Tambah Data Donatur';
+                submitDonaturBtn.textContent = 'Tambah';
+                cancelEditDonaturBtn.classList.add('hidden');
             }
         };
 
         window.handleEdit = async (type, id) => {
             showLoading(true);
-            const colRef = type === 'muka' ? uangMukaCol : uangKeluarCol;
+            const colRef = type === 'muka' ? uangMukaCol : type === 'keluar' ? uangKeluarCol : donaturCol;
             const docSnap = await getDoc(doc(colRef, id));
             if (docSnap.exists()) {
-                const trx = docSnap.data();
+                const data = docSnap.data();
                 if (type === 'muka') {
                     editingMukaId = id;
-                    descMukaInput.value = trx.description;
-                    totalMukaInput.value = trx.totalAmount;
-                    dpMukaInput.value = trx.downPayment;
+                    descMukaInput.value = data.description;
+                    totalMukaInput.value = data.totalAmount;
+                    dpMukaInput.value = data.downPayment;
                     formTitleMuka.textContent = 'Edit Data Uang Muka';
                     submitMukaBtn.textContent = 'Update';
                     cancelEditMukaBtn.classList.remove('hidden');
                     descMukaInput.focus();
-                } else {
+                } else if (type === 'keluar') {
                     editingKeluarId = id;
-                    descKeluarInput.value = trx.description;
-                    totalKeluarInput.value = trx.amount;
+                    descKeluarInput.value = data.description;
+                    totalKeluarInput.value = data.amount;
                     formTitleKeluar.textContent = 'Edit Data Uang Keluar';
                     submitKeluarBtn.textContent = 'Update';
                     cancelEditKeluarBtn.classList.remove('hidden');
                     descKeluarInput.focus();
+                } else if (type === 'donatur') {
+                    editingDonaturId = id;
+                    nameDonaturInput.value = data.name;
+                    amountDonaturInput.value = data.amount;
+                    formTitleDonatur.textContent = 'Edit Data Donatur';
+                    submitDonaturBtn.textContent = 'Update';
+                    cancelEditDonaturBtn.classList.remove('hidden');
+                    nameDonaturInput.focus();
                 }
             }
             showLoading(false);
         };
 
         window.handleDelete = async (type, id) => {
-            const colRef = type === 'muka' ? uangMukaCol : uangKeluarCol;
+            const colRef = type === 'muka' ? uangMukaCol : type === 'keluar' ? uangKeluarCol : donaturCol;
+            
+            // For Donatur, only admin can delete directly.
+            if (type === 'donatur') {
+                if (userRole === 'admin') {
+                    showConfirmationModal('Hapus Donatur', 'Yakin ingin menghapus data donatur ini secara permanen?', async () => {
+                        await deleteDoc(doc(colRef, id));
+                        showNotification('Data donatur berhasil dihapus.');
+                    });
+                }
+                return;
+            }
+
+            // For other types (muka, keluar)
             if (userRole === 'admin') {
                 showConfirmationModal('Hapus Permanen', 'Yakin ingin menghapus data ini secara permanen?', async () => {
                     await deleteDoc(doc(colRef, id));
@@ -619,9 +732,12 @@
         cancelEditMukaBtn.addEventListener('click', () => resetForm('muka'));
         formKeluar.addEventListener('submit', (e) => handleFormSubmit('keluar', e));
         cancelEditKeluarBtn.addEventListener('click', () => resetForm('keluar'));
+        formDonatur.addEventListener('submit', (e) => handleFormSubmit('donatur', e));
+        cancelEditDonaturBtn.addEventListener('click', () => resetForm('donatur'));
 
         searchMukaInput.addEventListener('input', (e) => { searchTermMuka = e.target.value; renderTableMuka(); });
         searchKeluarInput.addEventListener('input', (e) => { searchTermKeluar = e.target.value; renderTableKeluar(); });
+        searchDonaturInput.addEventListener('input', (e) => { searchTermDonatur = e.target.value; renderTableDonatur(); });
     </script>
 </body>
 </html>
