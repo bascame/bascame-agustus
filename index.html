@@ -116,7 +116,7 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="w-64 bg-brand-red-800 text-white flex-col fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex">
             <div class="h-20 flex items-center justify-center border-b border-brand-red-900/50">
-                <h1 class="text-xl font-bold tracking-wider">PANEL KEUANGAN</h1>
+                <h1 class="text-xl font-bold tracking-wider">KP.CEMPLANG RW 02</h1>
             </div>
             <nav class="flex-1 px-4 py-4 space-y-2">
                 <a href="#" id="menu-dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10v11h6v-7h6v7h6V10L12 3 3 10z"/></svg>Dashboard</a>
@@ -147,9 +147,10 @@
             </header>
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6 lg:p-8">
                 <div id="content-dashboard" class="space-y-8">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-green-100 p-3 rounded-full"><svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Total Pemasukan</h3><p id="summary-pemasukan" class="text-2xl font-bold text-gray-900"></p></div></div></div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-red-100 p-3 rounded-full"><svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Total Uang Keluar</h3><p id="summary-keluar" class="text-2xl font-bold text-gray-900"></p></div></div></div>
+                        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-yellow-100 p-3 rounded-full"><svg class="w-6 h-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Sisa Uang Muka</h3><p id="summary-sisa-muka" class="text-2xl font-bold text-gray-900"></p></div></div></div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm"><div class="flex items-center gap-4"><div class="bg-blue-100 p-3 rounded-full"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" /></svg></div><div><h3 class="text-sm font-medium text-gray-500">Saldo Akhir</h3><p id="summary-saldo" class="text-2xl font-bold text-gray-900"></p></div></div></div>
                     </div>
                     <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
@@ -415,13 +416,21 @@
         };
 
         const renderDashboard = () => {
-            const totalMasuk = allDataMasuk.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
-            const totalMuka = allDataMuka.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.downPayment, 0);
+            const totalPemasukanIuran = allDataMasuk.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
             const totalDonasi = allDataDonatur.reduce((sum, donor) => sum + donor.amount, 0);
-            const totalKeluar = allDataKeluar.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
-            const saldoAkhir = totalMasuk + totalMuka + totalDonasi - totalKeluar;
-            $('#summary-pemasukan').textContent = formatCurrency(totalMasuk + totalMuka + totalDonasi);
-            $('#summary-keluar').textContent = formatCurrency(totalKeluar);
+
+            const totalPengeluaranReguler = allDataKeluar.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.amount, 0);
+            const totalUangMuka = allDataMuka.filter(t => t.status === 'active').reduce((sum, trx) => sum + trx.downPayment, 0);
+            
+            const totalSisaMuka = allDataMuka.filter(t => t.status === 'active').reduce((sum, trx) => sum + (trx.totalAmount - trx.downPayment), 0);
+
+            const totalPemasukan = totalPemasukanIuran + totalDonasi;
+            const totalPengeluaran = totalPengeluaranReguler + totalUangMuka;
+            const saldoAkhir = totalPemasukan - totalPengeluaran;
+
+            $('#summary-pemasukan').textContent = formatCurrency(totalPemasukan);
+            $('#summary-keluar').textContent = formatCurrency(totalPengeluaran);
+            $('#summary-sisa-muka').textContent = formatCurrency(totalSisaMuka);
             $('#summary-saldo').textContent = formatCurrency(saldoAkhir);
         };
 
@@ -446,7 +455,7 @@
             };
 
             processData(allDataMasuk, 'amount', 'createdAt', 'income');
-            processData(allDataMuka, 'downPayment', 'createdAt', 'income');
+            processData(allDataMuka, 'downPayment', 'createdAt', 'outcome'); // FIX: Uang Muka is an outcome
             processData(allDataDonatur, 'amount', 'date', 'income');
             processData(allDataKeluar, 'amount', 'createdAt', 'outcome');
             
